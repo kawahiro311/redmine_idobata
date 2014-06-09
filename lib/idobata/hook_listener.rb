@@ -26,7 +26,7 @@ class IdobataHookListener < Redmine::Hook::Listener
     url     = get_url(issue)
     comment = escape(context[:journal].notes)
     text    = "[#{escape project.name}] #{author} updated <a href=\"#{url}\">##{issue.id} #{subject}</a>"
-    text   += ": #{truncate comment}" unless comment.blank?
+    text   += "<br/><blockquote>#{truncate comment.gsub(/(\r\n|\r|\n)/, '<br/>')}</blockquote>" unless comment.blank?
 
     notify(text, project)
   end
@@ -59,7 +59,7 @@ class IdobataHookListener < Redmine::Hook::Listener
   end
 
   def truncate(text)
-    text.size > 30 ? "#{text.slice(0, 30)}..." : text
+    text.size > 500 ? "#{text.slice(0, 500)}..." : text
   end
 
   def headers
