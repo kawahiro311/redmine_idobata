@@ -1,3 +1,5 @@
+require_dependency 'idobata/hook_listener'
+
 Redmine::Plugin.register :redmine_idobata do
   name 'Redmine Idobata plugin'
   author 'Hiro Kawasaki'
@@ -6,10 +8,7 @@ Redmine::Plugin.register :redmine_idobata do
   url 'https://github.com/kawahiro311/redmine_idobata'
   author_url 'https://github.com/kawahiro311'
 
-  Rails.configuration.to_prepare do
-    require_dependency 'idobata/hook_listener'
-    require_dependency 'idobata/view_hooks'
-    require_dependency 'idobata/project_patch'
-    Project.send(:include, RedmineIdobata::Patches::ProjectPatch)
-  end
+  settings :default => {
+    'idobata_webhook_url' => ''
+  }, :partial => 'settings/idobata_settings'
 end

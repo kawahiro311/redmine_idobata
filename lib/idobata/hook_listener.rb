@@ -5,7 +5,7 @@ class IdobataHookListener < Redmine::Hook::Listener
     issue = context[:issue]
     project = issue.project
 
-    return unless hook_url_configured?(project)
+    return if hook_url(project).blank?
 
     author  = escape(issue.author.login)
     subject = escape(issue.subject)
@@ -20,7 +20,7 @@ class IdobataHookListener < Redmine::Hook::Listener
     journal = context[:journal]
     project = issue.project
 
-    return unless hook_url_configured?(project)
+    return if hook_url(project).blank?
 
     author  = escape(journal.user.login)
     subject = escape(issue.subject)
@@ -36,7 +36,7 @@ class IdobataHookListener < Redmine::Hook::Listener
     page = context[:page]
     project = page.wiki.project
 
-    return unless hook_url_configured?(project)
+    return if hook_url(project).blank?
 
     author  = escape(page.content.author.login)
     url     = get_url(page)
@@ -47,8 +47,9 @@ class IdobataHookListener < Redmine::Hook::Listener
 
   private
 
-  def hook_url_configured?(project)
-    project.idobata_webhook_url.present?
+  def hook_url(project)
+    pcf = ProjectCustomField.find_by_name('Idobata Webhook URL')
+    project.custom_value_for(pcf).try(:value).presence || Setting.plugin_redmine_idobata[:idobata_webhook_url]
   end
 
   def escape(text)
@@ -70,7 +71,7 @@ class IdobataHookListener < Redmine::Hook::Listener
   end
 
   def notify(text, project)
-    uri = URI.parse(project.idobata_webhook_url)
+    uri = URI.parse(hook_url(project))
     req = Net::HTTP::Post.new(uri.request_uri, headers)
     req.form_data = { 'source' => text, 'format' => 'html' }
 
