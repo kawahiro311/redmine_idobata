@@ -17,14 +17,15 @@ class IdobataHookListener < Redmine::Hook::Listener
 
   def controller_issues_edit_after_save(context = {})
     issue = context[:issue]
+    journal = context[:journal]
     project = issue.project
 
     return unless hook_url_configured?(project)
 
-    author  = escape(issue.author.login)
+    author  = escape(journal.user.login)
     subject = escape(issue.subject)
     url     = get_url(issue)
-    comment = escape(context[:journal].notes)
+    comment = escape(journal.notes)
     text    = "[#{escape project.name}] #{author} updated <a href=\"#{url}\">##{issue.id} #{subject}</a>"
     text   += "<br/><blockquote>#{truncate comment.gsub(/(\r\n|\r|\n)/, '<br/>')}</blockquote>" unless comment.blank?
 
