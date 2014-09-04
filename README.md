@@ -8,10 +8,3 @@ Clone this repository to your Redmine plugins directory
 ```
 git clone https://github.com/kawahiro311/redmine_idobata.git redmine_idobata
 ```
-
-migrate database
-```
-rake redmine:plugins:migrate RAILS_ENV=production
-```
-
-then restart Redmine
