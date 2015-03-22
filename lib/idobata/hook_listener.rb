@@ -45,6 +45,38 @@ class IdobataHookListener < Redmine::Hook::Listener
     notify(text, project)
   end
 
+  def controller_messages_new_after_save(context = {})
+    message = context[:message]
+    project = message.project
+
+    return if hook_url(project).blank?
+
+    author  = escape(message.author.login)
+    subject = escape(message.subject)
+    url     = get_url(message)
+    comment = escape(message.content)
+    text    = "[#{escape project.name}] #{author} posted new message <a href=\"#{url}\">#{escape subject}</a>"
+    text   += "<br/><blockquote>#{truncate comment.gsub(/(\r\n|\r|\n)/, '<br/>')}</blockquote>" unless comment.blank?
+
+    notify(text, project)
+  end
+
+  def controller_messages_reply_after_save(context = {})
+    message = context[:message]
+    project = message.project
+
+    return if hook_url(project).blank?
+
+    author  = escape(message.author.login)
+    subject = escape(message.subject)
+    url     = get_url(message)
+    comment = escape(message.content)
+    text    = "[#{escape project.name}] #{author} posted reply message <a href=\"#{url}\">#{escape subject}</a>"
+    text   += "<br/><blockquote>#{truncate comment.gsub(/(\r\n|\r|\n)/, '<br/>')}</blockquote>" unless comment.blank?
+
+    notify(text, project)
+  end
+
   private
 
   def hook_url(project)
