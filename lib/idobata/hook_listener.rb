@@ -98,7 +98,7 @@ class IdobataHookListener < Redmine::Hook::Listener
 
   def headers
     {
-      'User-Agent'  => "redmine_idobata / 0.0.1"
+      'User-Agent'  => "redmine_idobata / 1.1.0"
     }
   end
 
